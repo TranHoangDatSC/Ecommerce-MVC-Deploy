@@ -9,7 +9,7 @@ alembic
 # Driver for SQL Server (using pyodbc for Windows/Linux compatibility)
 pyodbc
 python-dotenv  # For managing environment variables (connection strings, secrets)
-jinja2
+jinja2==3.1.2
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]

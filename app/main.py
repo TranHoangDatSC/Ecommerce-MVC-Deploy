@@ -1,5 +1,6 @@
 from fastapi.responses import HTMLResponse
 import uvicorn
+import os
 from fastapi import FastAPI, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -13,6 +14,8 @@ from app.api.base import api_router
 from fastapi import APIRouter
 from app.api.endpoints import auth, products, categories
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(BASE_DIR, "templates"))
 
 # --- 🛠️ HÀM TẠO BẢNG DATABASE (ĐƯỢC KÍCH HOẠT LẠI) ---
 def create_tables():
@@ -47,12 +50,14 @@ app = FastAPI(
 
 # Cấu hình Static và Templates
 # 1. Tài nguyên hệ thống (CSS, JS, Lib) - nằm trong app/static
-app.mount("/app_static", StaticFiles(directory="app/static"), name="static_app")
+if os.path.exists(os.path.join(BASE_DIR, "static")):
+    app.mount("/app_static", StaticFiles(directory=os.path.join(BASE_DIR, "static")), name="static_app")
 
 # 2. Dữ liệu người dùng/Ảnh sản phẩm - nằm ở root static
 # Giữ cái này là /static để các đường dẫn ảnh trong DB không bị hỏng
-app.mount("/static", StaticFiles(directory="static"), name="static_root")
-templates = Jinja2Templates(directory="app/templates")
+root_static = os.path.join(os.path.dirname(BASE_DIR), "static") 
+if os.path.exists(root_static):
+    app.mount("/static", StaticFiles(directory=root_static), name="static_root")
 
 app.mount("/templates", StaticFiles(directory="app/templates"), name="templates")
 @app.get("/")
