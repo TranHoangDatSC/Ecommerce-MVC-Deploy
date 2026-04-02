@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Electro - Electronics Website Template</title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="" name="keywords">
+    <meta content="" name="description">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;500;600;700&family=Roboto:wght@400;500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Font Stylesheet -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="lib/animate/animate.min.css" rel="stylesheet">
+    <link href="lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+
+
+    <!-- Customized Bootstrap Stylesheet -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Template Stylesheet -->
+    <link href="css/style.css" rel="stylesheet">
+
+    <style>
+        .card.border-secondary {
+            /* Dùng màu đỏ cam (#dc3545) hoặc màu chủ đạo của bạn */
+            border: 2px solid #dc3545 !important; 
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Thêm bóng nhẹ cho hiệu ứng 3D */
+        }
+
+        /* ĐIỀU CHỈNH ĐƯỜNG PHÂN CÁCH TRONG CARD (header và footer) */
+        .card-header, .card-footer {
+            border-color: #dee2e6 !important; /* Đảm bảo màu phân cách rõ ràng */
+        }
+        /* Đảm bảo khung nội dung có khoảng cách lớn với các thành phần ngoài */
+        .cart-page-wrapper {
+            padding-top: 50px; /* Khoảng cách trên */
+            padding-bottom: 50px; /* Khoảng cách dưới */
+        }
+        /* Buộc phần tóm tắt giỏ hàng phải có khoảng đệm bên trong (p-30 bị mất) */
+        .card-body, .card-footer {
+            padding: 2rem !important; /* Buộc padding lớn hơn */
+        }
+        /* Tinh chỉnh tiêu đề CART SUMMARY */
+        .card-header h4 {
+            color: #212529; /* Màu chữ tiêu đề */
+        }
+        /* Đảm bảo input quantity không bị lỗi */
+        .quantity .form-control {
+            border-radius: 0;
+            border: 1px solid #ced4da !important;
+        }
+        /* Đảm bảo nút Checkout màu vàng nổi bật */
+        .btn-warning {
+            background-color: #ffc107;
+            border-color: #ffc107;
+            color: #212529;
+            font-weight: bold;
+        }
+        .btn-warning:hover {
+            background-color: #e0a800;
+            border-color: #d39e00;
+        }
+        .detail-img-container {
+            width: 100%;
+            height: 500px; /* Chiều cao cố định cho ảnh */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #fff;
+        }
+        .detail-img-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        .custom-scroll {
+            max-height: 350px; /* Chiều cao cố định box mô tả */
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        /* Hiệu ứng rung khi vượt quá số lượng */
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+        .apply-shake {
+            animation: shake 0.4s ease-in-out;
+            border: 2px solid #dc3545 !important;
+        }
+
+        /* Hiệu ứng hover cho nút Mua Ngay */
+        .btn-buy-now {
+            transition: all 0.3s ease;
+        }
+        .btn-buy-now:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(243, 139, 0, 0.4) !important;
+            filter: brightness(1.1);
+        }
+        .video-link-box {
+            background-color: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .video-link-box:hover {
+            background-color: #e9ecef;
+            border-color: #f38b00;
+        }
+        /* Tuỳ chỉnh thanh cuộn cho đẹp */
+        .custom-scroll::-webkit-scrollbar { width: 6px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #ccc; border-radius: 10px; }
+    </style>
+</head>
+
+<body>
+    <!-- Spinner Start -->
+    <div id="spinner"
+        class="show bg-white position-fixed translate-middle w-100 vh-100 top-50 start-50 d-flex align-items-center justify-content-center">
+        <div class="spinner-border text-primary" style="width: 3rem; height: 3rem;" role="status">
+            <span class="sr-only">Loading...</span>
+        </div>
+    </div>
+    <!-- Spinner End -->
+
+    <!-- Topbar Start -->
+    <div class="container-fluid px-5 d-none border-bottom d-lg-block">
+        <div class="row gx-0 align-items-center">
+            <div class="col-lg-4 text-center text-lg-start mb-lg-0">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    <a href="#" class="text-muted me-2"> Help</a><small> / </small>
+                    <a href="#" class="text-muted mx-2"> Support</a><small> / </small>
+                    <a href="#" class="text-muted ms-2"> Contact</a>
+
+                </div>
+            </div>
+            <div class="col-lg-4 text-center d-flex align-items-center justify-content-center">
+                <small class="text-dark">Call Us:</small>
+                <a href="#" class="text-muted">(+012) 1234 567890</a>
+            </div>
+
+            <div class="col-lg-4 text-center text-lg-end">
+                <div class="d-inline-flex align-items-center" style="height: 45px;">
+                    <div class="dropdown">
+                        <a href="#" class="dropdown-toggle text-muted ms-2" data-bs-toggle="dropdown" id="dashboardDropdownLink">
+                            <small><i class="fa fa-home me-2"></i>Bảng điều khiển</small>
+                        </a>
+                        <div class="dropdown-menu rounded" id="authMenuDropdown">
+                            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#loginModal" id="uiLoginLink">Đăng Nhập</a>
+                            <a href="#" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#registerModal" id="uiRegisterLink">Đăng Ký</a>
+
+                            <a href="../templates/user_acc_manage.html" class="dropdown-item d-none" id="uiProfileLink"><i class="fas fa-user-circle me-2"></i> Tài khoản của tôi</a>
+                            <a href="../templates/cart.html" class="dropdown-item d-none" id="uiCartLink"><i class="fas fa-shopping-cart me-2"></i> Giỏ hàng của tôi</a>
+                            <a href="/app/templates/user/seller_dashboard.html" class="dropdown-item d-none" id="uiStoreLink"><i class="fas fa-store me-2"></i> Cửa hàng của tôi</a>
+                            <a href="#" class="dropdown-item d-none" id="uiLogoutLink"><i class="fas fa-sign-out-alt me-2"></i> Đăng Xuất</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="container-fluid px-5 py-4 d-none d-lg-block">
+        <div class="row gx-0 align-items-center text-center">
+            <div class="col-md-4 col-lg-3 text-center text-lg-start">
+                <div class="d-inline-flex align-items-center">
+                    <a href="" class="navbar-brand p-0">
+                        <h1 class="display-5 text-primary m-0"><i
+                                class="fas fa-shopping-bag text-secondary me-2"></i>Chợ đồ cũ</h1>
+                        <!-- <img src="img/logo.png" alt="Logo"> -->
+                    </a>
+                </div>
+            </div>
+            <!-- <div class="col-md-4 col-lg-6 text-center">
+                <div class="position-relative ps-4">
+                    <div class="d-flex border rounded-pill">
+                        <input class="form-control border-0 rounded-pill w-100 py-3" type="text"
+                            data-bs-target="#dropdownToggle123" placeholder="Search Looking For?">
+                        <button type="button" class="btn btn-primary rounded-pill py-3 px-5" style="border: 0;"><i
+                                class="fas fa-search"></i></button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-lg-3 text-center text-lg-end">
+                <div class="d-inline-flex align-items-center">
+                    <a href="#" class="text-muted d-flex align-items-center justify-content-center me-3"><span
+                            class="rounded-circle btn-md-square border"><i class="fas fa-heart"></i></a>
+                    <a href="#" class="text-muted d-flex align-items-center justify-content-center"><span
+                            class="rounded-circle btn-md-square border"><i class="fas fa-shopping-cart"></i></span>
+                        <span class="text-dark ms-2">$0.00</span></a>
+                </div>
+            </div> -->
+        </div>
+    </div>
+    <!-- Topbar End -->
+
+    <!-- Navbar & Hero Start -->
+    <div class="container-fluid nav-bar p-0">
+        <div class="row gx-0 bg-primary px-5 align-items-center">
+            <div class="col-lg-3 d-none d-lg-block">
+                <nav class="navbar navbar-light position-relative" style="width: 250px;">
+                    <button class="navbar-toggler border-0 fs-4 w-100 px-0 text-start" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#allCat">
+                        <h4 class="m-0"><i class="fa fa-bars me-2"></i>Loại sản phẩm</h4>
+                    </button>
+                    <div class="collapse navbar-collapse rounded-bottom" id="allCat">
+                        <div class="navbar-nav ms-auto py-0">
+                            <ul class="list-unstyled categories-bars">
+                                <li>
+                                    <div class="categories-bars-item">
+                                        <a href="#">Accessories</a>
+                                        <span>(3)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="categories-bars-item">
+                                        <a href="#">Electronics & Computer</a>
+                                        <span>(5)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="categories-bars-item">
+                                        <a href="#">Laptops & Desktops</a>
+                                        <span>(2)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="categories-bars-item">
+                                        <a href="#">Mobiles & Tablets</a>
+                                        <span>(8)</span>
+                                    </div>
+                                </li>
+                                <li>
+                                    <div class="categories-bars-item">
+                                        <a href="#">SmartPhone & Smart TV</a>
+                                        <span>(5)</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="col-12 col-lg-9">
+                <nav class="navbar navbar-expand-lg navbar-light bg-primary ">
+                    <a href="" class="navbar-brand d-block d-lg-none">
+                        <h1 class="display-5 text-secondary m-0"><i
+                                class="fas fa-shopping-bag text-white me-2"></i>Chợ cũ</h1>
+                        <!-- <img src="img/logo.png" alt="Logo"> -->
+                    </a>
+                    <button class="navbar-toggler ms-auto" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbarCollapse">
+                        <span class="fa fa-bars fa-1x"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navbarCollapse">
+                        <div class="navbar-nav ms-auto py-0">
+                            <a href="../templates/index.html" class="nav-item nav-link active">Trang chủ</a>
+                            <a href="../templates/shop.html" class="nav-item nav-link">Shop</a>
+                            <div class="nav-item dropdown">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Trang của tôi</a>
+                                <div class="dropdown-menu m-0">
+                                    <a href="../templates/user_acc_manage.html" class="dropdown-item">Tài khoản của tôi</a>
+                                    <a href="../templates/cart.html" class="dropdown-item">Giỏ hàng của tôi</a>
+                                    <a href="../templates/user/seller_dashboard.html" class="dropdown-item">Cửa hàng của tôi</a>
+                                </div>
+                            </div>
+                            <a href="contact.html" class="nav-item nav-link me-2">Contact</a>
+                            <div class="nav-item dropdown d-block d-lg-none mb-3">
+                                <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">All Category</a>
+                                <div class="dropdown-menu m-0">
+                                    <ul class="list-unstyled categories-bars">
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="#">Accessories</a>
+                                                <span>(3)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="#">Electronics & Computer</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="#">Laptops & Desktops</a>
+                                                <span>(2)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="#">Mobiles & Tablets</a>
+                                                <span>(8)</span>
+                                            </div>
+                                        </li>
+                                        <li>
+                                            <div class="categories-bars-item">
+                                                <a href="#">SmartPhone & Smart TV</a>
+                                                <span>(5)</span>
+                                            </div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <a href="" class="btn btn-secondary rounded-pill py-2 px-4 px-lg-3 mb-3 mb-md-3 mb-lg-0"><i
+                                class="fa fa-mobile-alt me-2"></i> +0123 456 7890</a>
+                    </div>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <!-- Navbar & Hero End -->
+
+    <!-- Single Page Header start -->
+    <div class="container-fluid page-header py-5">
+        <h1 class="text-center text-white display-6 wow fadeInUp" data-wow-delay="0.1s">Trang chi tiết mặt hàng</h1>
+        <ol class="breadcrumb justify-content-center mb-0 wow fadeInUp" data-wow-delay="0.3s">
+            <li class="breadcrumb-item"><a href="../templates/index.html">Trang chủ</a></li>
+            <li class="breadcrumb-item active text-white">Chi tiết mặt hàng</li>
+        </ol>
+    </div>
+    <!-- Single Page Header End -->
+
+    <!-- Details Page Start -->
+    <div class="container-fluid py-5 mt-5">
+        <div class="container py-5">
+            <div class="row g-5" id="product-detail-wrapper">
+                <div class="text-center py-5">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p>Đang tải thông tin sản phẩm...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Details Page End -->
+
+    <!-- Footer Start -->
+    <div class="container-fluid footer py-5 wow fadeIn" data-wow-delay="0.2s">
+        <div class="container py-5">
+            <div class="row g-4 rounded mb-5" style="background: rgba(255, 255, 255, .03);">
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="rounded p-4">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
+                            style="width: 70px; height: 70px;">
+                            <i class="fas fa-map-marker-alt fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white">Address</h4>
+                            <p class="mb-2">123 Street New York.USA</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="rounded p-4">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
+                            style="width: 70px; height: 70px;">
+                            <i class="fas fa-envelope fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white">Mail Us</h4>
+                            <p class="mb-2">info@example.com</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="rounded p-4">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
+                            style="width: 70px; height: 70px;">
+                            <i class="fa fa-phone-alt fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white">Telephone</h4>
+                            <p class="mb-2">(+012) 3456 7890</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="rounded p-4">
+                        <div class="rounded-circle bg-secondary d-flex align-items-center justify-content-center mb-4"
+                            style="width: 70px; height: 70px;">
+                            <i class="fab fa-firefox-browser fa-2x text-primary"></i>
+                        </div>
+                        <div>
+                            <h4 class="text-white">Yoursite@ex.com</h4>
+                            <p class="mb-2">(+012) 3456 7890</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row g-5">
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <div class="footer-item">
+                            <h4 class="text-primary mb-4">Newsletter</h4>
+                            <p class="text-white mb-3">Dolor amet sit justo amet elitr clita ipsum elitr est.Lorem ipsum
+                                dolor sit amet, consectetur adipiscing elit consectetur adipiscing elit.</p>
+                            <div class="position-relative mx-auto rounded-pill">
+                                <input class="form-control rounded-pill w-100 py-3 ps-4 pe-5" type="text"
+                                    placeholder="Enter your email">
+                                <button type="button"
+                                    class="btn btn-primary rounded-pill position-absolute top-0 end-0 py-2 mt-2 me-2">SignUp</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="text-primary mb-4">Customer Service</h4>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Contact Us</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Returns</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Order History</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Site Map</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Testimonials</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> My Account</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Unsubscribe Notification</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="text-primary mb-4">Information</h4>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> About Us</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Delivery infomation</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Privacy Policy</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Terms & Conditions</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Warranty</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> FAQ</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Seller Login</a>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-6 col-xl-3">
+                    <div class="footer-item d-flex flex-column">
+                        <h4 class="text-primary mb-4">Extras</h4>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Brands</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Gift Vouchers</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Affiliates</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Wishlist</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Order History</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Track Your Order</a>
+                        <a href="#" class=""><i class="fas fa-angle-right me-2"></i> Track Your Order</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Footer End -->
+
+    <!-- Copyright Start -->
+    <div class="container-fluid copyright py-4">
+        <div class="container">
+            <div class="row g-4 align-items-center">
+                <div class="col-md-6 text-center text-md-start mb-md-0">
+                    <span class="text-white"><a href="#" class="border-bottom text-white"><i
+                                class="fas fa-copyright text-light me-2"></i>Your Site Name</a>, All right
+                        reserved.</span>
+                </div>
+                <div class="col-md-6 text-center text-md-end text-white">
+
+                    <!--/*** This template is free as long as you keep the below author’s credit link/attribution link/backlink. ***/-->
+                    <!--/*** If you'd like to use the template without the below author’s credit link/attribution link/backlink, ***/-->
+                    <!--/*** you can purchase the Credit Removal License from "https://htmlcodex.com/credit-removal". ***/-->
+                    Designed By <a class="border-bottom text-white" href="https://htmlcodex.com">HTML Codex</a>.
+                    Distributed By <a class="border-bottom text-white" href="https://themewagon.com">ThemeWagon</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Copyright End -->
+
+    <!-- Model đăng nhập -->
+    <div class="modal fade" id="loginModal" tabindex="-1" aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="loginModalLabel">Đăng Nhập Tài Khoản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="loginForm">
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <input type="email" class="form-control" id="email" name="username" required placeholder="Email đăng nhập">
+                        </div>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <label for="password" class="form-label">Mật khẩu:</label>
+                                <a href="#" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal" data-bs-dismiss="modal">Quên mật khẩu?</a>
+                            </div>
+                            <input type="password" class="form-control" id="password" name="password" required placeholder="Mật khẩu">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Đăng Nhập</button>
+                    </form>
+                    <div id="loginResult" class="mt-3 p-3 rounded" style="display: none; border: 1px solid;"></div>
+                    
+                    <p class="mt-3 text-center text-muted small">Chưa có tài khoản? <a href="#" data-bs-toggle="modal" data-bs-target="#registerModal" data-bs-dismiss="modal">Đăng Ký Ngay</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal đăng ký -->
+    <div class="modal fade" id="registerModal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-lg"> <div class="modal-content border-0 shadow-lg">
+            <div class="modal-header bg-success text-white">
+                <h5 class="modal-title fw-bold">Tạo Tài Khoản Mới</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4">
+                    <form id="registerForm">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Email:</label>
+                                <input type="email" class="form-control" name="Email" required placeholder="example@gmail.com">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Username:</label>
+                                <input type="text" class="form-control" name="Username" required placeholder="Tên đăng nhập">
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Tên đầy đủ:</label>
+                                <input type="text" class="form-control" name="FullName" required placeholder="Nguyễn Văn A">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">Số điện thoại:</label>
+                                <input type="text" class="form-control" name="PhoneNumber" required placeholder="09xxx..." pattern="[0-9]{10,11}">
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Địa chỉ:</label>
+                            <textarea class="form-control" name="Address" rows="2" placeholder="Số nhà, tên đường, Phường/Xã..."></textarea>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Mật khẩu:</label>
+                            <input type="password" class="form-control" name="Password" required minlength="6" placeholder="******">
+                        </div>
+
+                        <button type="submit" class="btn btn-success w-100 py-2 fw-bold shadow-sm">ĐĂNG KÝ NGAY</button>
+                    </form>
+                    <div id="registerResult" class="mt-3" style="display: none;"></div>
+                </div>
+                <div class="mt-3 text-center border-top pt-3">
+                    <p class="mb-0 text-muted">Bạn đã có tài khoản?</p>
+                    <a href="#" class="fw-bold text-success text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+                        Đăng nhập tại đây
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--- Modal quên mật khẩu -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fw-bold">Khôi Phục Mật Khẩu</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-muted small">Nhập email của bạn, chúng tôi sẽ gửi mã xác nhận để đặt lại mật khẩu.</p>
+                    <form id="forgotPasswordForm">
+                        <div class="mb-3">
+                            <label class="form-label fw-bold">Email đăng ký:</label>
+                            <input type="email" class="form-control" name="email" required placeholder="example@gmail.com">
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">Gửi Yêu Cầu</button>
+                    </form>
+                    <div class="mt-3 text-center">
+                        <a href="#" class="small text-decoration-none" data-bs-toggle="modal" data-bs-target="#loginModal" data-bs-dismiss="modal">
+                            <i class="fas fa-arrow-left"></i> Quay lại Đăng nhập
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-primary btn-lg-square back-to-top"><i class="fa fa-arrow-up"></i></a>
+
+    <!-- JavaScript Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="lib/wow/wow.min.js"></script>
+    <script src="lib/owlcarousel/owl.carousel.min.js"></script>
+
+    <!-- Template Javascript -->
+    <script src="js/main.js"></script>
+
+    <script>
+    /*** 1. KHAI BÁO CẤU HÌNH & BIẾN TOÀN CỤC */
+    const CONFIG = {
+        API: {
+            TOKEN: '/api/v1/auth/token',
+            REGISTER: '/api/v1/auth/register',
+            PRODUCTS: '/api/products/',
+            CATEGORIES: '/api/v1/categories/',
+            PRODUCT_DETAIL: '/api/products',
+            CART_ADD: '/api/v1/carts/add'
+        },
+        IMAGE: {
+            FALLBACK: 'https://placehold.co/300x200/f5f5f5/555555?text=No+Image'
+        }
+    };
+
+    // Cần khai báo cái này để các hàm Auth không bị lỗi Runtime
+    const UI_ELEMENTS = {
+        loginModal: document.getElementById('loginModal') ? new bootstrap.Modal(document.getElementById('loginModal')) : null,
+        registerModal: document.getElementById('registerModal') ? new bootstrap.Modal(document.getElementById('registerModal')) : null,
+        loginResult: document.getElementById('loginResult'),
+        registerResult: document.getElementById('registerResult')
+    };
+
+    /*** 2. MODULE QUẢN LÝ XÁC THỰC (AUTH MANAGER) */
+    const AuthManager = {
+        updateUI: function() {
+            const token = localStorage.getItem('access_token');
+            const fullName = localStorage.getItem('full_name');
+            let roles = [];
+            try {
+                roles = JSON.parse(localStorage.getItem('roles') || '[]');
+            } catch (e) { roles = []; }
+
+            const links = {
+                login: document.getElementById('uiLoginLink'),
+                register: document.getElementById('uiRegisterLink'),
+                profile: document.getElementById('uiProfileLink'),
+                cart: document.getElementById('uiCartLink'),
+                store: document.getElementById('uiStoreLink'),
+                logout: document.getElementById('uiLogoutLink'),
+                dropdown: document.getElementById('dashboardDropdownLink')
+            };
+
+            if (token) {
+                if (links.login) links.login.classList.add('d-none');
+                if (links.register) links.register.classList.add('d-none');
+                
+                ['profile', 'cart', 'logout', 'store'].forEach(key => {
+                    if (links[key]) links[key].classList.remove('d-none');
+                });
+
+                if (links.store) {
+                    links.store.href = "/templates/user/seller_dashboard.html";
+                    if (roles.includes("Admin") || roles.includes(1)) {
+                        links.store.href = "/admin/dashboard_admin.html";
+                    } else if (roles.includes("Moderator") || roles.includes(2)) {
+                        links.store.href = "/moderator/moderator_dashboard.html";
+                    }
+                }
+
+                if (links.dropdown) {
+                    // ĐÃ SỬA: Hiện đầy đủ tên hoặc "Tài khoản"
+                    const name = (fullName && fullName !== "undefined" && fullName !== "") ? fullName : 'Tài khoản';
+                    links.dropdown.innerHTML = `<small><i class="fa fa-user me-2"></i> ${name}</small>`;
+                }
+            } else {
+                Object.values(links).forEach(link => link && link.classList.add('d-none'));
+                if (links.login) links.login.classList.remove('d-none');
+                if (links.register) links.register.classList.remove('d-none');
+                if (links.dropdown) {
+                    links.dropdown.classList.remove('d-none');
+                    links.dropdown.innerHTML = `<small><i class="fa fa-home me-2"></i> Bảng điều khiển</small>`;
+                }
+            }
+        },
+
+        handleAuthSubmit: async function(event, endpoint) {
+            event.preventDefault();
+            const isLogin = endpoint === CONFIG.API.TOKEN;
+            const resultDiv = isLogin ? UI_ELEMENTS.loginResult : UI_ELEMENTS.registerResult;
+            const formData = new FormData(event.target);
+
+            try {
+                const response = isLogin 
+                    ? await fetch(endpoint, { method: 'POST', body: new URLSearchParams(formData) })
+                    : await fetch(endpoint, { 
+                        method: 'POST', 
+                        headers: { 'Content-Type': 'application/json' }, 
+                        body: JSON.stringify(Object.fromEntries(formData)) 
+                    });
+
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.detail || 'Thao tác thất bại');
+
+                if (isLogin) {
+                    localStorage.setItem('access_token', result.access_token);
+                    localStorage.setItem('roles', JSON.stringify(result.roles || []));
+                    localStorage.setItem('full_name', result.full_name || result.username || 'Tài khoản');
+
+                    if (resultDiv) {
+                        resultDiv.textContent = 'Đăng nhập thành công!';
+                        resultDiv.className = 'alert alert-success mt-3';
+                        resultDiv.style.display = 'block';
+                    }
+
+                    setTimeout(() => {
+                        const roles = result.roles || [];
+                        if (roles.includes("Admin") || roles.includes(1)) {
+                            window.location.href = "/admin/dashboard_admin.html";
+                        } else if (roles.includes("Moderator") || roles.includes(2)) {
+                            window.location.href = "/moderator/moderator_dashboard.html";
+                        } else {
+                            // ĐÃ SỬA: Về trang chủ sạch hoặc reload tại chỗ
+                            window.location.reload();
+                        }
+                    }, 800);
+                } else {
+                    alert("Đăng ký thành công!");
+                    if (UI_ELEMENTS.registerModal) UI_ELEMENTS.registerModal.hide();
+                    if (UI_ELEMENTS.loginModal) UI_ELEMENTS.loginModal.show();
+                }
+            } catch (error) {
+                if (resultDiv) {
+                    resultDiv.textContent = error.message;
+                    resultDiv.className = 'alert alert-danger mt-3';
+                    resultDiv.style.display = 'block';
+                }
+            }
+        },
+
+        logout: function(e) {
+            if(e) e.preventDefault();
+            localStorage.clear();
+            // ĐÃ SỬA: Đăng xuất là về Root path ngay lập tức
+            window.location.href = "/";
+        }
+    };
+
+    /*** 3. MODULE CHI TIẾT SẢN PHẨM (GIỮ NGUYÊN LOGIC CỦA ÔNG) */
+    const DetailManager = {
+        currentStock: 0,
+        getProductID: () => new URLSearchParams(window.location.search).get('id'),
+        formatCurrency: (amount) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount),
+        
+        getCategoryLabel: (id) => {
+            const categories = { 1: "Đồ điện tử", 2: "Thời trang", 3: "Đồ gia dụng", 4: "Trang trí", 5: "Khác" };
+            return categories[id] || `Danh mục ${id}`;
+        },
+
+        changeQty: (step) => {
+            const input = document.getElementById('buy-quantity');
+            if (!input) return;
+            let current = parseInt(input.value) || 1;
+            let newValue = current + step;
+            if (newValue < 1) newValue = 1;
+            else if (newValue > DetailManager.currentStock) newValue = DetailManager.currentStock;
+            input.value = newValue;
+        },
+
+        loadDetail: async function() {
+            const id = this.getProductID();
+            if (!id) { window.location.href = "/"; return; }
+            try {
+                const res = await fetch(`${CONFIG.API.PRODUCT_DETAIL}/${id}`);
+                if (!res.ok) throw new Error("Không lấy được dữ liệu");
+                const p = await res.json();
+                this.currentStock = p.Quantity;
+                this.renderDetail(p);
+            } catch (err) {
+                document.getElementById('product-detail-wrapper').innerHTML = `<p class="text-center text-danger py-5">Lỗi tải dữ liệu.</p>`;
+            }
+        },
+
+        handleBuyNow: async function(productId) {
+            const qty = parseInt(document.getElementById('buy-quantity').value) || 1;
+            const success = await CartManager.addToCart(productId, qty, false);
+            if (success) window.location.href = "checkout.html";
+        },
+
+        handleAddToCart: async function(productId) {
+            const qty = parseInt(document.getElementById('buy-quantity').value) || 1;
+            const success = await CartManager.addToCart(productId, qty, false);
+            if (success) window.location.href = "cart.html";
+        },
+
+        renderDetail: function(p) {
+            const wrapper = document.getElementById('product-detail-wrapper');
+            const img = p.PrimaryImageUrl || 'img/no-image.jpg';
+            const categoryName = this.getCategoryLabel(p.CategoryID);
+            wrapper.innerHTML = `
+                <div class="col-lg-6">
+                    <div class="border rounded bg-white shadow-sm mb-3 detail-img-container">
+                        <img src="${img}" class="img-fluid" alt="${p.Title}">
+                    </div>
+                    ${p.VideoUrl ? `<div class="p-3 bg-light rounded"><a href="${p.VideoUrl}" target="_blank">Xem Video</a></div>` : ''}
+                </div>
+                <div class="col-lg-6 ps-lg-4">
+                    <nav class="small mb-2"><span class="text-primary fw-bold">${categoryName}</span></nav>
+                    <h2 class="fw-bold mb-2">${p.Title}</h2>
+                    <h3 class="text-danger fw-bold mb-4">${this.formatCurrency(p.Price)}</h3>
+                    <div class="p-3 border rounded bg-light mb-4" style="min-height: 150px;">${p.Description || 'Chưa có mô tả.'}</div>
+                    <div class="p-4 border rounded bg-white shadow-sm">
+                        <div class="mb-3">Kho: <span class="badge ${p.Quantity > 0 ? 'bg-success' : 'bg-danger'}">${p.Quantity > 0 ? 'Còn hàng' : 'Hết hàng'}</span></div>
+                        <div class="d-flex gap-3">
+                            <div class="input-group" style="width: 120px;">
+                                <button class="btn btn-outline-secondary" onclick="DetailManager.changeQty(-1)">-</button>
+                                <input type="number" id="buy-quantity" class="form-control text-center" value="1" readonly>
+                                <button class="btn btn-outline-secondary" onclick="DetailManager.changeQty(1)">+</button>
+                            </div>
+                            <button onclick="DetailManager.handleAddToCart(${p.ProductID})" class="btn btn-primary flex-grow-1">THÊM GIỎ</button>
+                        </div>
+                    </div>
+                </div>`;
+        }
+    };
+
+    /*** 4. MODULE GIỎ HÀNG (CART) */
+    const CartManager = {
+        addToCart: async function(productId, quantity = 1, redirect = true) {
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                alert("Vui lòng đăng nhập!");
+                if (UI_ELEMENTS.loginModal) UI_ELEMENTS.loginModal.show();
+                return false;
+            }
+            try {
+                const res = await fetch(CONFIG.API.CART_ADD, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+                    body: JSON.stringify({ ProductID: productId, Quantity: quantity })
+                });
+                if (res.ok) {
+                    if (redirect) window.location.href = "cart.html";
+                    return true;
+                }
+                const result = await res.json();
+                alert(result.detail || "Lỗi thêm giỏ hàng");
+                return false;
+            } catch (err) { return false; }
+        }
+    };
+
+    /*** 5. KHỞI TẠO */
+    document.addEventListener('DOMContentLoaded', () => {
+        AuthManager.updateUI();
+        DetailManager.loadDetail();
+
+        // SỬA: Gắn sự kiện chuẩn tên hàm handleAuthSubmit
+        const loginForm = document.getElementById('loginForm');
+        if(loginForm) loginForm.onsubmit = (e) => AuthManager.handleAuthSubmit(e, CONFIG.API.TOKEN);
+
+        const regForm = document.getElementById('registerForm');
+        if(regForm) regForm.onsubmit = (e) => AuthManager.handleAuthSubmit(e, CONFIG.API.REGISTER);
+
+        const logoutBtn = document.getElementById('uiLogoutLink');
+        if (logoutBtn) logoutBtn.onclick = AuthManager.logout;
+    });
+    </script>
+</body>
+</html>
+

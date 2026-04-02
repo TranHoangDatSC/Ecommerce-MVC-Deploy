@@ -1,0 +1,10 @@
+# Python rác
+__pycache__/
+*.pyc
+
+# Dữ liệu & Cấu hình nhạy cảm
+.env
+sql_app.db
+
+# Docker rác
+.dockerignore

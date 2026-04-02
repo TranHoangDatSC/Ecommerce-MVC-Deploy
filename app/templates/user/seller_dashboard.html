@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Seller Dashboard - Chợ Đồ Cũ</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        :root { --sidebar-bg: #0f172a; --primary-blue: #38bdf8; --bg-light: #f8fafc; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg-light); display: flex; min-height: 100vh; color: #1e293b; margin: 0; }
+        
+        /* Sidebar */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; position: fixed; height: 100%; z-index: 1000; }
+        .sidebar h5 { padding: 25px 20px; color: var(--primary-blue); font-weight: 800; border-bottom: 1px solid #1e293b; margin-bottom: 0; }
+        .sidebar a { padding: 14px 25px; text-decoration: none; color: #94a3b8; display: flex; align-items: center; transition: 0.2s; border-left: 4px solid transparent; font-size: 0.9rem; }
+        .sidebar a:hover, .sidebar a.active { background-color: #1e293b; border-left: 4px solid var(--primary-blue); color: white; }
+        .sidebar i { margin-right: 12px; width: 20px; }
+
+        /* Layout */
+        .main-content { margin-left: 260px; flex-grow: 1; padding: 30px; width: calc(100% - 260px); }
+        .header-bar { background: white; padding: 15px 30px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 30px; display: flex; justify-content: space-between; align-items: center; }
+
+        /* UI Components */
+        .function-card { background: white; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 25px; }
+        .stat-card { border-radius: 16px; padding: 20px; color: white; position: relative; overflow: hidden; }
+        .badge-status { padding: 5px 10px; border-radius: 6px; font-weight: 600; font-size: 0.75rem; }
+        .table { vertical-align: middle; }
+        
+        /* Preview Image */
+        #imagePreviewContainer { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .preview-item { width: 70px; height: 70px; border-radius: 8px; object-fit: cover; border: 2px solid var(--primary-blue); }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h5><i class="fas fa-store-alt"></i> SELLER HUB</h5>
+    <div class="mt-3">
+        <a href="#" class="active" data-content="dashboard"><i class="fas fa-th-large"></i> Bảng điều khiển</a>
+        <a href="#" data-content="create-product"><i class="fas fa-plus-circle"></i> Đăng sản phẩm</a>
+        <a href="#" data-content="manage-products"><i class="fas fa-boxes"></i> Quản lý kho hàng</a>
+        <a href="#" data-content="manage-orders"><i class="fas fa-clipboard-list"></i> Đơn hàng mới</a>
+        <hr class="mx-3 opacity-10">
+        <a href="../index.html"><i class="fas fa-home"></i> Quay lại trang chủ</a>
+        <a href="#" onclick="handleLogout()" class="text-danger"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="header-bar">
+        <h4 id="currentTitle" class="fw-bold m-0">Bảng điều khiển</h4>
+        <div id="sellerName" class="fw-bold text-secondary">Chào bạn, Người bán!</div>
+    </div>
+
+    <div id="dashboard-content" class="content-area">
+        <div class="row g-4 mb-4">
+            <div class="col-md-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);">
+                    <p class="mb-1 opacity-75 small text-uppercase fw-bold">Tổng doanh thu</p>
+                    <h3 class="fw-bold mb-0">32,850,000 đ</h3>
+                    <span class="badge bg-white text-primary mt-2">+12.5% <i class="fas fa-arrow-up"></i></span>
+                    <i class="fas fa-wallet position-absolute bottom-0 end-0 m-3 opacity-10 fa-3x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <p class="mb-1 opacity-75 small text-uppercase fw-bold">Đơn hoàn tất</p>
+                    <h3 class="fw-bold mb-0">128</h3>
+                    <span class="badge bg-white text-success mt-2">Đạt mục tiêu</span>
+                    <i class="fas fa-check-circle position-absolute bottom-0 end-0 m-3 opacity-10 fa-3x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                    <p class="mb-1 opacity-75 small text-uppercase fw-bold">Tỉ lệ chuyển đổi</p>
+                    <h3 class="fw-bold mb-0">3.4%</h3>
+                    <span class="badge bg-white text-warning mt-2">Trung bình</span>
+                    <i class="fas fa-chart-line position-absolute bottom-0 end-0 m-3 opacity-10 fa-3x"></i>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);">
+                    <p class="mb-1 opacity-75 small text-uppercase fw-bold">Lượt xem tin</p>
+                    <h3 class="fw-bold mb-0">1,240</h3>
+                    <span class="badge bg-white text-indigo mt-2">+240 hôm nay</span>
+                    <i class="fas fa-eye position-absolute bottom-0 end-0 m-3 opacity-10 fa-3x"></i>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-lg-8"><div class="function-card"><canvas id="revenueChart" height="300"></canvas></div></div>
+            <div class="col-lg-4"><div class="function-card"><canvas id="categoryChart" height="300"></canvas></div></div>
+        </div>
+    </div>
+
+    <div id="create-product-content" class="content-area" style="display: none;">
+        <div class="function-card shadow-sm mx-auto" style="max-width: 800px;">
+            <h5 class="fw-bold mb-4 border-bottom pb-3">Đăng tin rao bán</h5>
+            <form id="sellForm">
+                <div class="mb-3">
+                    <label class="form-label">Tên sản phẩm</label>
+                    <input type="text" class="form-control" name="title" required placeholder="Tên sản phẩm...">
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Danh mục</label>
+                        <select id="category" class="form-select" name="category_id" required></select>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Giá bán (VNĐ)</label>
+                        <input type="number" class="form-control" name="price" required>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Số lượng trong kho</label>
+                        <input type="number" class="form-control" name="quantity" required min="1" value="1">
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label">Video URL</label>
+                        <input type="url" class="form-control" name="video_url">
+                    </div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Hình ảnh thực tế (Tối đa 3)</label>
+                    <input type="file" class="form-control" id="imageInput" name="files" multiple accept="image/*" required>
+                    <div id="imagePreviewContainer"></div>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Mô tả sản phẩm</label>
+                    <textarea class="form-control" name="description" rows="4"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 py-2 fw-bold">XÁC NHẬN ĐĂNG BÁN</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="manage-products-content" class="content-area" style="display: none;">
+        <div class="function-card">
+            <h5 class="fw-bold mb-4">Kho hàng của tôi</h5>
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th>Ảnh</th>
+                            <th>Sản phẩm</th>
+                            <th>Giá</th>
+                            <th>Số lượng</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Hành động</th>
+                        </tr>
+                    </thead>
+                    <tbody id="productTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="manage-orders-content" class="content-area" style="display: none;">
+        <div class="function-card">
+            <h5 class="fw-bold mb-4">Danh sách 7 đơn hàng mới nhất</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Mã đơn</th>
+                            <th>Ngày đặt</th>
+                            <th>Khách hàng</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái</th>
+                            <th class="text-center">Thao tác</th>
+                        </tr>
+                    </thead>
+                    <tbody id="orderTableBody"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="stockModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-0 shadow">
+            <div class="modal-header">
+                <h5 class="fw-bold mb-0">Cập nhật tồn kho</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body py-4">
+                <label class="form-label fw-bold">Số lượng hiện có thực tế:</label>
+                <input type="number" id="newStockInput" class="form-control form-control-lg text-center" min="0">
+                <input type="hidden" id="stockProductId">
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-primary px-4" onclick="confirmUpdateStock()">Lưu thay đổi</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const apiBase = "http://127.0.0.1:8000/api/v1";
+    
+    // 1. HARD-CODE 7 ĐƠN HÀNG
+    function renderOrders() {
+        const mockOrders = [
+            { id: 'ORD-2025-001', date: '24/12/2025', customer: 'Nguyễn Văn Linh', total: 15500000, status: 'Chờ xác nhận', badge: 'bg-warning text-dark' },
+            { id: 'ORD-2025-002', date: '23/12/2025', customer: 'Trần Thị Tuyết', total: 850000, status: 'Đang giao', badge: 'bg-primary' },
+            { id: 'ORD-2025-003', date: '22/12/2025', customer: 'Lê Minh Tâm', total: 1200000, status: 'Đã hoàn tất', badge: 'bg-success' },
+            { id: 'ORD-2025-004', date: '21/12/2025', customer: 'Phạm Quốc Hùng', total: 5500000, status: 'Đã hủy', badge: 'bg-danger' },
+            { id: 'ORD-2025-005', date: '20/12/2025', customer: 'Hoàng Anh Tuấn', total: 2300000, status: 'Chờ lấy hàng', badge: 'bg-info text-dark' },
+            { id: 'ORD-2025-006', date: '19/12/2025', customer: 'Vũ Hải Yến', total: 9500000, status: 'Đã hoàn tất', badge: 'bg-success' },
+            { id: 'ORD-2025-007', date: '18/12/2025', customer: 'Đặng Quang Thắng', total: 450000, status: 'Đang trả hàng', badge: 'bg-dark' }
+        ];
+        const tbody = document.getElementById('orderTableBody');
+        if (tbody) tbody.innerHTML = mockOrders.map(o => `
+            <tr>
+                <td class="fw-bold">#${o.id}</td>
+                <td>${o.date}</td>
+                <td>${o.customer}</td>
+                <td class="text-primary fw-bold">${o.total.toLocaleString()}đ</td>
+                <td><span class="badge ${o.badge}">${o.status}</span></td>
+                <td class="text-center"><button class="btn btn-sm btn-outline-secondary">Chi tiết</button></td>
+            </tr>`).join('');
+    }
+
+    // 2. LOGIC CẬP NHẬT SỐ LƯỢNG
+    function openStockModal(id, currentQty) {
+        document.getElementById('stockProductId').value = id;
+        document.getElementById('newStockInput').value = currentQty;
+        new bootstrap.Modal(document.getElementById('stockModal')).show();
+    }
+
+    async function confirmUpdateStock() {
+        const id = document.getElementById('stockProductId').value;
+        const newQty = document.getElementById('newStockInput').value;
+        const token = localStorage.getItem('access_token');
+        try {
+            const res = await fetch(`${apiBase}/products/${id}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+                body: JSON.stringify({ Quantity: parseInt(newQty) })
+            });
+            if (res.ok) {
+                alert("Đã cập nhật số lượng!");
+                location.reload();
+            }
+        } catch (err) { alert("Lỗi kết nối Backend!"); }
+    }
+
+    // 3. QUẢN LÝ SẢN PHẨM
+    async function renderProductTable() {
+        const token = localStorage.getItem('access_token');
+        const tbody = document.getElementById('productTableBody');
+        
+        // Nếu không có bảng để đổ dữ liệu thì dừng luôn, đỡ lỗi
+        if (!tbody) return; 
+
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(window.atob(base64));
+            const myId = payload.sub || payload.id || payload.user_id;
+
+            const res = await fetch(`${apiBase}/products/`, { 
+                headers: { "Authorization": "Bearer " + token } 
+            });
+            
+            if (!res.ok) throw new Error("Không thể lấy dữ liệu từ Server");
+            const products = await res.json();
+
+            const myProducts = products.filter(p => {
+                const sID = p.SellerID || p.seller_id;
+                return String(sID) === String(myId);
+            });
+
+            // --- ĐIỂM SỬA LỖI TẠI ĐÂY ---
+            const countElement = document.getElementById('totalProductCount');
+            if (countElement) {
+                countElement.textContent = myProducts.length;
+            }
+            // ----------------------------
+
+            if (myProducts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="text-center p-4">Bạn chưa có sản phẩm nào.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = myProducts.map(p => {
+                const pID = p.ProductID || p.id;
+                const pTitle = p.Title || p.title;
+                const pPrice = p.Price || p.price;
+                const pQty = (p.Quantity !== undefined) ? p.Quantity : p.quantity;
+                const pStatus = (p.Status !== undefined) ? p.Status : p.status;
+                const pImg = p.PrimaryImageUrl || p.image_url || 'https://via.placeholder.com/50';
+
+                return `
+                    <tr>
+                        <td><img src="${pImg}" class="rounded shadow-sm" width="50" height="50" onerror="this.src='https://via.placeholder.com/50'"></td>
+                        <td><div class="fw-bold">${pTitle}</div><small class="text-muted">ID: ${pID}</small></td>
+                        <td class="fw-bold text-primary">${parseFloat(pPrice).toLocaleString()} đ</td>
+                        <td><span class="badge bg-light text-dark border">${pQty}</span></td>
+                        <td><span class="badge-status ${pStatus == 1 ? 'bg-success text-white' : 'bg-secondary text-white'}">${pStatus == 1 ? 'Đang bán' : 'Tạm ẩn'}</span></td>
+                        <td class="text-center">
+                            <button class="btn btn-sm btn-dark me-1" onclick="openStockModal(${pID}, ${pQty})"><i class="fas fa-edit"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="deleteProduct(${pID})"><i class="fas fa-trash"></i></button>
+                        </td>
+                    </tr>`;
+            }).join('');
+        } catch (err) {
+            console.error("Lỗi render table:", err);
+        }
+    }
+
+    // 4. TIỆN ÍCH KHÁC
+    function showContent(contentId) {
+        document.querySelectorAll('.content-area').forEach(a => a.style.display = 'none');
+        document.getElementById(contentId + '-content').style.display = 'block';
+        document.querySelectorAll('.sidebar a').forEach(l => l.classList.remove('active'));
+        document.querySelector(`[data-content="${contentId}"]`).classList.add('active');
+        if (contentId === 'dashboard') initCharts();
+        if (contentId === 'manage-products') renderProductTable();
+        if (contentId === 'manage-orders') renderOrders();
+    }
+
+    function initCharts() {
+        // 1. Biểu đồ Doanh thu & Lợi nhuận (Line Chart)
+        const ctxRev = document.getElementById('revenueChart').getContext('2d');
+        
+        // Hủy chart cũ nếu đã tồn tại để tránh lỗi re-render
+        if (window.myLineChart) window.myLineChart.destroy();
+        
+        window.myLineChart = new Chart(ctxRev, {
+            type: 'line',
+            data: {
+                labels: ['Tuần 1', 'Tuần 2', 'Tuần 3', 'Tuần 4'],
+                datasets: [{
+                    label: 'Doanh thu tháng này (VNĐ)',
+                    data: [4500000, 8200000, 7800000, 12350000],
+                    borderColor: '#3b82f6',
+                    backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                    fill: true,
+                    tension: 0.4,
+                    borderWidth: 3,
+                    pointRadius: 5
+                }, {
+                    label: 'Tháng trước',
+                    data: [3200000, 5400000, 6100000, 8900000],
+                    borderColor: '#cbd5e1',
+                    borderDash: [5, 5],
+                    fill: false,
+                    tension: 0.4
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: { legend: { position: 'bottom' } },
+                scales: { y: { beginAtZero: true } }
+            }
+        });
+
+        // 2. Biểu đồ Cơ cấu Ngành hàng (Doughnut Chart)
+        const ctxCat = document.getElementById('categoryChart').getContext('2d');
+        
+        if (window.myPieChart) window.myPieChart.destroy();
+
+        window.myPieChart = new Chart(ctxCat, {
+            type: 'doughnut',
+            data: {
+                labels: ['Điện tử', 'Đồ gia dụng', 'Phụ kiện', 'Khác'],
+                datasets: [{
+                    data: [45, 25, 20, 10],
+                    backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#6366f1'],
+                    hoverOffset: 15,
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                cutout: '70%',
+                plugins: {
+                    legend: { position: 'bottom' },
+                    title: { display: true, text: 'Phân tích ngành hàng (%)', font: { weight: 'bold' } }
+                }
+            }
+        });
+    }
+
+    async function loadCategories() {
+        const select = document.getElementById("category");
+        if (select.options.length > 0) return;
+        const res = await fetch(`${apiBase}/categories/`);
+        const data = await res.json();
+        data.forEach(cat => select.add(new Option(cat.CategoryName, cat.CategoryID)));
+    }
+
+    document.getElementById('imageInput').addEventListener('change', function(e) {
+        const container = document.getElementById('imagePreviewContainer');
+        container.innerHTML = '';
+        [...e.target.files].forEach(file => {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                const img = document.createElement('img');
+                img.src = ev.target.result;
+                img.className = 'preview-item';
+                container.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        });
+    });
+
+    document.getElementById('sellForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const res = await fetch(`${apiBase}/products/upload/`, {
+            method: "POST",
+            headers: { "Authorization": "Bearer " + localStorage.getItem('access_token') },
+            body: formData
+        });
+        if (res.ok) { alert("Đã đăng bán!"); showContent('manage-products'); }
+    });
+
+    document.addEventListener('DOMContentLoaded', () => {
+        showContent('dashboard');
+        loadCategories();
+        renderOrders();
+        const user = localStorage.getItem('user_name');
+        if (user) document.getElementById('sellerName').textContent = `Chào, ${user}!`;
+        document.querySelectorAll('.sidebar a[data-content]').forEach(link => {
+            link.addEventListener('click', (e) => showContent(e.currentTarget.dataset.content));
+        });
+    });
+
+    function handleLogout() { localStorage.clear(); window.location.href = "/"; }
+    async function deleteProduct(id) { if(confirm("Xóa sản phẩm này?")) await fetch(`${apiBase}/products/${id}`, { method: "DELETE", headers: { "Authorization": "Bearer " + localStorage.getItem('access_token') } }); renderProductTable(); }
+</script>
+</body>
+</html>

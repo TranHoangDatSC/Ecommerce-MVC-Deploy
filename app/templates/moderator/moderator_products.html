@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <title>Duyệt Sản Phẩm - Hệ Thống Moderator</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f4f4f9; display: flex; min-height: 100vh; }
+        
+        /* Sidebar chuẩn Dashboard */
+        .sidebar { width: 250px; background-color: #1e293b; color: white; position: fixed; height: 100%; display: flex; flex-direction: column; justify-content: space-between; z-index: 100; }
+        .sidebar h3 { padding: 20px; font-size: 1.1rem; font-weight: bold; border-bottom: 1px solid #334155; color: #38bdf8; }
+        .sidebar a { padding: 12px 20px; text-decoration: none; color: #cbd5e1; display: flex; align-items: center; transition: 0.2s; border-left: 4px solid transparent; }
+        .sidebar a:hover, .sidebar a.active { background-color: #334155; border-left: 4px solid #38bdf8; color: white; }
+        .sidebar i { width: 20px; margin-right: 12px; text-align: center; }
+
+        .main-content { margin-left: 250px; flex-grow: 1; padding: 25px; }
+
+        /* Table Spacing chuẩn Dashboard */
+        .product-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+        .product-row { background: white; transition: 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .product-row:hover { transform: scale(1.005); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .product-cell { padding: 15px; vertical-align: middle; }
+
+        .status-pill { padding: 4px 12px; border-radius: 9999px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; }
+        .status-0 { background-color: #fef3c7; color: #92400e; }
+        .status-1 { background-color: #dcfce7; color: #166534; }
+        .status-2 { background-color: #fee2e2; color: #991b1b; }
+
+        /* Action Buttons */
+        .action-btn { width: 34px; height: 34px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; border: none; cursor: pointer; color: white; }
+        .btn-view { background-color: #64748b; }
+        .btn-approve { background-color: #10b981; }
+        .btn-reject { background-color: #ef4444; }
+        .btn-reset { background-color: #f59e0b; } /* Màu cam cho Reset về chờ duyệt */
+        .action-btn:disabled { opacity: 0.2; cursor: not-allowed; filter: grayscale(1); }
+
+        /* Modal */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); backdrop-filter: blur(3px); }
+        .message-box { background: white; padding: 30px; border-radius: 12px; width: 90%; max-width: 450px; text-align: center; margin: 12% auto; animation: slideDown 0.3s ease-out; }
+        .detail-box { background: white; padding: 30px; border-radius: 16px; width: 95%; max-width: 900px; margin: 5% auto; position: relative; }
+        
+        @keyframes slideDown { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    </style>
+</head>
+<body onload="checkAuth(); fetchProducts();">
+
+    <div id="customMessageBox" class="modal">
+        <div class="message-box shadow-2xl">
+            <div id="msgIcon" class="text-5xl mb-4"></div>
+            <h4 id="messageBoxTitle" class="text-xl font-bold mb-2"></h4>
+            <p id="messageBoxContent" class="text-gray-600 mb-6"></p>
+            <div id="messageBoxActions" class="flex justify-center gap-3"></div>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <div>
+            <h3><i class="fas fa-gavel"></i> MODERATOR AREA</h3>
+            <nav class="mt-4">
+                <a href="/moderator/moderator_dashboard.html"><i class="fas fa-th-large"></i> Dashboard</a>
+                <h4 class="px-5 mt-6 mb-2 text-xs font-semibold text-slate-500 uppercase tracking-wider">Xử lý nhanh</h4>
+                <a href="/moderator/moderator_products.html" class="active"><i class="fas fa-box text-blue-400"></i> Duyệt Sản phẩm</a>
+                <a href="/moderator/moderator_users.html"><i class="fas fa-users-slash text-red-400"></i> Khóa Tài khoản</a>
+                <a href="/moderator/moderator_profile.html"><i class="fas fa-user-circle text-indigo-400"></i> Hồ sơ cá nhân</a>
+            </nav>
+        </div>
+        <div class="pb-6">
+            <a href="javascript:void(0)" onclick="handleLogout()" class="text-slate-400 hover:text-white px-5 flex items-center gap-3 transition">
+                <i class="fas fa-sign-out-alt"></i> Đăng xuất
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header-bar flex justify-between items-end mb-8">
+            <div>
+                <h2 class="text-3xl font-black text-slate-800 uppercase italic tracking-tight">Kiểm duyệt kho hàng</h2>
+                <p class="text-slate-500 text-sm">Xác thực sản phẩm trước khi hiển thị công khai.</p>
+            </div>
+            <div class="flex gap-4">
+                <div class="bg-white px-4 py-2 rounded-lg shadow-sm border text-sm font-bold text-slate-700">
+                    Đang đợi xử lý: <span id="pendingCount" class="text-orange-600">0</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex justify-between items-center mb-6">
+            <div class="flex gap-2">
+                <button onclick="fetchProducts(null)" class="px-4 py-2 bg-slate-800 text-white rounded-lg text-xs font-bold">Tất cả</button>
+                <button onclick="fetchProducts(0)" class="px-4 py-2 bg-white text-slate-600 border border-slate-200 rounded-lg text-xs font-bold hover:bg-slate-50 transition">Lọc: Chờ duyệt</button>
+            </div>
+            <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Tìm kiếm nhanh..." class="px-4 py-2 bg-white border border-slate-200 rounded-xl text-sm outline-none focus:ring-2 ring-indigo-500 w-64 shadow-sm">
+        </div>
+
+        <div class="overflow-x-auto">
+            <table class="product-table">
+                <thead>
+                    <tr class="text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                        <th class="p-4">ID</th>
+                        <th class="p-4">Thông tin sản phẩm</th>
+                        <th class="p-4">Người bán</th>
+                        <th class="p-4">Giá bán</th>
+                        <th class="p-4">Trạng thái</th>
+                        <th class="p-4 text-center">Xử lý nhanh</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="productModal" class="modal">
+        <div class="detail-box shadow-2xl">
+            <span class="absolute top-6 right-6 text-2xl text-slate-300 cursor-pointer hover:text-red-500" onclick="closeModal()">&times;</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                    <img id="m_img" src="" class="w-full h-[380px] object-cover rounded-2xl border bg-slate-50">
+                    <div id="m_video_container" class="mt-4"></div>
+                </div>
+                <div class="flex flex-col justify-between">
+                    <div>
+                        <span id="m_cat" class="text-[10px] font-black text-indigo-500 uppercase tracking-widest"></span>
+                        <h3 id="m_title" class="text-2xl font-black text-slate-800 mt-1"></h3>
+                        <p id="m_seller" class="text-sm text-slate-400 font-bold mb-4 italic"></p>
+                        <div class="bg-slate-50 p-4 rounded-xl border-l-4 border-indigo-500">
+                            <p id="m_desc" class="text-sm text-slate-600 leading-relaxed max-h-40 overflow-y-auto"></p>
+                        </div>
+                        <p id="m_price" class="text-3xl font-black text-indigo-600 mt-4"></p>
+                    </div>
+                    <div id="modalActions" class="flex gap-2 pt-6 border-t mt-4"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = "/api/v1/products";
+        let ALL_PRODUCTS = [];
+
+        function checkAuth() { if (!localStorage.getItem("access_token")) window.location.href = "/login.html"; }
+        function getHeaders() { return { 'Authorization': `Bearer ${localStorage.getItem("access_token")}`, 'Content-Type': 'application/json' }; }
+
+        async function fetchProducts(statusFilter = null) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '<tr><td colspan="6" class="text-center py-20 text-slate-400 italic">Đang đồng bộ dữ liệu...</td></tr>';
+            try {
+                const url = statusFilter !== null ? `${API_BASE}/moderator/all?status=${statusFilter}` : `${API_BASE}/moderator/all`;
+                const response = await fetch(url, { headers: getHeaders() });
+                if (response.status === 401) return handleUnauthorized();
+                ALL_PRODUCTS = await response.json();
+                renderTable(ALL_PRODUCTS);
+                document.getElementById('pendingCount').textContent = ALL_PRODUCTS.filter(p => p.Status === 0).length;
+            } catch (error) { body.innerHTML = '<tr><td colspan="6" class="text-center text-red-500 py-10">LỖI SERVER</td></tr>'; }
+        }
+
+        function renderTable(products) {
+            const body = document.getElementById('tableBody');
+            body.innerHTML = '';
+            products.forEach(p => {
+                const statusLabel = {0: 'Chờ duyệt', 1: 'Đã duyệt', 2: 'Từ chối'}[p.Status];
+                body.insertAdjacentHTML('beforeend', `
+                    <tr class="product-row">
+                        <td class="product-cell font-mono text-slate-300">#${p.ProductID}</td>
+                        <td class="product-cell">
+                            <div class="flex items-center gap-3">
+                                <img src="${p.PrimaryImageUrl || 'https://via.placeholder.com/60'}" class="w-11 h-11 rounded-lg object-cover shadow-sm border">
+                                <span class="font-bold text-slate-700 truncate w-40">${p.Title}</span>
+                            </div>
+                        </td>
+                        <td class="product-cell text-slate-500 font-medium">${p.seller?.FullName || 'N/A'}</td>
+                        <td class="product-cell font-black text-indigo-600">${p.Price.toLocaleString()}đ</td>
+                        <td class="product-cell"><span class="status-pill status-${p.Status}">${statusLabel}</span></td>
+                        <td class="product-cell text-center">
+                            <div class="flex justify-center gap-1">
+                                <button onclick="showDetail(${p.ProductID})" class="action-btn btn-view"><i class="fas fa-eye"></i></button>
+                                <button onclick="updateStatus(${p.ProductID}, 1)" class="action-btn btn-approve" ${p.Status === 1 ? 'disabled' : ''}><i class="fas fa-check"></i></button>
+                                <button onclick="updateStatus(${p.ProductID}, 2)" class="action-btn btn-reject" ${p.Status === 2 ? 'disabled' : ''}><i class="fas fa-times"></i></button>
+                                <button onclick="updateStatus(${p.ProductID}, 0)" class="action-btn btn-reset" title="Chuyển về chờ duyệt" ${p.Status === 0 ? 'disabled' : ''}><i class="fas fa-undo-alt"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `);
+            });
+        }
+
+        async function updateStatus(id, newStatus) {
+            let note = "";
+            if(newStatus === 2) {
+                note = prompt("Lý do từ chối sản phẩm này:");
+                if (note === null) return;
+                if (!note.trim()) return alert("Phải có lý do!");
+            }
+
+            const confirmMsg = newStatus === 0 ? "Bạn muốn đưa sản phẩm này về trạng thái chờ duyệt?" : "Xác nhận cập nhật trạng thái này?";
+            
+            showMessage("Xác nhận", confirmMsg, 'info', true, async () => {
+                try {
+                    const response = await fetch(`${API_BASE}/status/${id}`, {
+                        method: "PUT",
+                        headers: getHeaders(),
+                        body: JSON.stringify({ Status: newStatus, ModeratorNote: note })
+                    });
+                    if (response.ok) {
+                        fetchProducts();
+                        showMessage("Thành công", "Đã cập nhật.", "success");
+                        closeModal();
+                    }
+                } catch (e) { showMessage("Lỗi", "Kết nối thất bại.", "error"); }
+            });
+        }
+
+        function showDetail(id) {
+            const p = ALL_PRODUCTS.find(x => x.ProductID === id);
+            if(!p) return;
+            document.getElementById('m_title').textContent = p.Title;
+            document.getElementById('m_cat').textContent = p.CategoryName || "Sản phẩm";
+            document.getElementById('m_seller').textContent = "Đăng bởi: " + (p.seller?.FullName || 'Ẩn danh');
+            document.getElementById('m_price').textContent = p.Price.toLocaleString() + 'đ';
+            document.getElementById('m_desc').textContent = p.Description || "Không có mô tả.";
+            document.getElementById('m_img').src = p.PrimaryImageUrl || 'https://via.placeholder.com/600';
+
+            const videoContainer = document.getElementById('m_video_container');
+            videoContainer.innerHTML = p.VideoUrl 
+                ? `<a href="${p.VideoUrl}" target="_blank" class="flex items-center justify-center gap-2 w-full p-4 bg-slate-800 text-white rounded-xl font-bold text-xs hover:bg-black transition"><i class="fas fa-play"></i> XEM VIDEO KIỂM ĐỊNH</a>`
+                : `<p class="text-center p-4 text-slate-300 text-[10px] font-black border border-dashed rounded-xl">KHÔNG CÓ VIDEO</p>`;
+
+            const actions = document.getElementById('modalActions');
+            actions.innerHTML = `
+                <button onclick="updateStatus(${p.ProductID}, 0)" class="px-4 py-3 rounded-xl bg-orange-50 text-orange-600 font-bold hover:bg-orange-100 transition text-xs">CHỜ DUYỆT</button>
+                <button onclick="updateStatus(${p.ProductID}, 2)" class="px-4 py-3 rounded-xl bg-red-50 text-red-600 font-bold hover:bg-red-100 transition text-xs">TỪ CHỐI</button>
+                <button onclick="updateStatus(${p.ProductID}, 1)" class="flex-1 py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 shadow-lg shadow-indigo-100 transition text-sm">PHÊ DUYỆT ĐĂNG</button>
+            `;
+            document.getElementById('productModal').style.display = 'block';
+        }
+
+        function handleSearch() {
+            const val = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = ALL_PRODUCTS.filter(p => p.Title.toLowerCase().includes(val) || p.ProductID.toString().includes(val));
+            renderTable(filtered);
+        }
+
+        function showMessage(title, content, type = 'info', isConfirm = false, onConfirm = null) {
+            const msgBox = document.getElementById('customMessageBox');
+            document.getElementById('messageBoxTitle').textContent = title;
+            document.getElementById('messageBoxContent').textContent = content;
+            const icon = document.getElementById('msgIcon');
+            const actions = document.getElementById('messageBoxActions');
+            icon.innerHTML = type === 'success' ? '✅' : (type === 'error' ? '❌' : '🔔');
+            actions.innerHTML = '';
+            if (isConfirm) {
+                const b1 = document.createElement('button'); b1.className = "px-6 py-2 bg-slate-800 text-white rounded-lg font-bold text-sm";
+                b1.textContent = "Xác nhận"; b1.onclick = () => { msgBox.style.display = 'none'; if(onConfirm) onConfirm(); };
+                const b2 = document.createElement('button'); b2.className = "px-6 py-2 bg-slate-100 text-slate-500 rounded-lg font-bold text-sm";
+                b2.textContent = "Hủy"; b2.onclick = () => msgBox.style.display = 'none';
+                actions.append(b1, b2);
+            } else {
+                const ok = document.createElement('button'); ok.className = "px-10 py-2 bg-indigo-600 text-white rounded-lg font-bold text-sm";
+                ok.textContent = "Đã hiểu"; ok.onclick = () => msgBox.style.display = 'none';
+                actions.appendChild(ok);
+            }
+            msgBox.style.display = 'block';
+        }
+
+        function closeModal() { document.getElementById('productModal').style.display = 'none'; }
+        function handleUnauthorized() { localStorage.clear(); window.location.href = "/"; }
+        function handleLogout() { showMessage("Đăng xuất", "Thoát hệ thống?", "info", true, handleUnauthorized); }
+        window.onclick = (e) => { if(e.target.id === 'productModal' || e.target.id === 'customMessageBox') { closeModal(); document.getElementById('customMessageBox').style.display = 'none'; } }
+    </script>
+</body>
+</html>
