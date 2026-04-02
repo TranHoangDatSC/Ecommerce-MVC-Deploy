@@ -11,3 +11,5 @@ pyodbc
 python-dotenv  # For managing environment variables (connection strings, secrets)
 jinja2
 python-multipart
+python-jose[cryptography]
+passlib[bcrypt]
