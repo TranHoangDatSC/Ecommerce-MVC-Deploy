@@ -5,7 +5,7 @@ pydantic
 pydantic-settings
 # Database (SQLAlchemy 2.0+ for modern syntax)
 sqlalchemy
-
+alembic
 # Driver for SQL Server (using pyodbc for Windows/Linux compatibility)
 pyodbc
 python-dotenv  # For managing environment variables (connection strings, secrets)
@@ -13,3 +13,6 @@ jinja2
 python-multipart
 python-jose[cryptography]
 passlib[bcrypt]
+Pillow
+httpx
+requests
