@@ -19,9 +19,12 @@ app = FastAPI(title=settings.PROJECT_NAME)
 # 2. HACK STATIC (Fix giao diện không cần sửa HTML)
 static_path = os.path.join(BASE_DIR, "static")
 if os.path.exists(static_path):
-    for folder in ["css", "js", "lib", "img", "scss"]:
-        if os.path.exists(os.path.join(static_path, folder)):
-            app.mount(f"/{folder}", StaticFiles(directory=os.path.join(static_path, folder)), name=f"st_{folder}")
+    app.mount("/templates", StaticFiles(directory=static_path), name="static_hack")
+
+    for folder in ["css", "js", "lib", "img"]:
+        folder_path = os.path.join(static_path, folder)
+        if os.path.exists(folder_path):
+            app.mount(f"/{folder}", StaticFiles(directory=folder_path), name=f"st_{folder}")
 
 root_static = os.path.join(os.path.dirname(BASE_DIR), "static")
 if os.path.exists(root_static):
