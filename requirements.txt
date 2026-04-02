@@ -2,7 +2,7 @@
 fastapi
 uvicorn
 pydantic
-
+pydantic-settings
 # Database (SQLAlchemy 2.0+ for modern syntax)
 sqlalchemy
 
