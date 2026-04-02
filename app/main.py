@@ -17,7 +17,26 @@ from app.api.endpoints import auth, products, categories
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 # Templates thường nằm cùng cấp với main.py trong thư mục app
 template_path = os.path.join(BASE_DIR, "templates")
+# Tìm thư mục templates bằng mọi giá
+possible_paths = [
+    os.path.join(BASE_DIR, "templates"),           # Trường hợp: app/templates
+    os.path.join(os.path.dirname(BASE_DIR), "templates"), # Trường hợp: templates (ở gốc)
+    "/opt/render/project/src/app/templates",       # Đường dẫn cứng trên Render 1
+    "/opt/render/project/src/templates"            # Đường dẫn cứng trên Render 2
+]
+
+template_path = None
+for path in possible_paths:
+    if os.path.exists(path):
+        template_path = path
+        break
+
+if not template_path:
+    # Nếu vẫn không thấy, ép nó về thư mục hiện tại để tránh crash
+    template_path = os.path.join(BASE_DIR, "templates")
+
 templates = Jinja2Templates(directory=template_path)
+print(f"--- TEMPLATE PATH BEING USED: {template_path} ---")
 
 # --- 🛠️ DATABASE SETUP ---
 def create_tables():
